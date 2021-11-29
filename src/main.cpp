@@ -14,11 +14,28 @@
 #include "./headers/engine.hpp"
 
 
+#define ESC_PIN_1 0x03
+#define ESC_PIN_2 0x04
+#define ESC_PIN_3 0x05
+
+#define IR_SENSOR_PIN_1 0x07
+#define IR_SENSOR_PIN_2 0x08
+#define IR_SENSOR_PIN_3 0x09
+#define IR_SENSOR_PIN_4 0x0A
+#define IR_SENSOR_PIN_5 0x0B
+#define IR_SENSOR_PIN_6 0x0C
+
+
+void initialize_content();
+
+
 /**
  * @brief Functie die alles opzet 
  * 
  */
 void setup() {
+  initialize_content();
+
   Serial.begin(115200);
 }
 
@@ -39,6 +56,10 @@ void loop() {
  */
 void initialize_content()
 {
+  // Declareer objecten
   DCEngine engine;
-  engine.start();
+
+
+  // Declareer pinModes
+  engine.init_spi_ports(ESC_PIN_1, ESC_PIN_2, ESC_PIN_3);
 }

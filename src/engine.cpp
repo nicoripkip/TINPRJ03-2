@@ -53,7 +53,9 @@ void DCEngine::stop() {
  * @param esc_pin_3 
  */
 void DCEngine::run_forward(int esc_pin_1, int esc_pin_2, int esc_pin_3) {
+    if (this->_backForward == true) {
 
+    }
 }
 
 
@@ -65,10 +67,17 @@ void DCEngine::run_forward(int esc_pin_1, int esc_pin_2, int esc_pin_3) {
  * @param esc_pin_3 
  */
 void DCEngine::run_backward(int esc_pin_1, int esc_pin_2, int esc_pin_3) {
+    if (this->_backForward == false) {
 
+    }
 }
 
 
+/**
+ * @brief 
+ * 
+ * @param c 
+ */
 void DCEngine::message(char c[5]) {
     Serial.println(c);
 }

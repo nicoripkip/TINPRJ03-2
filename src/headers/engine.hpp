@@ -21,7 +21,8 @@ class DCEngine
 {
     private:
         bool _onOff;
-        int speed;
+        bool _backForward;
+        double _speed;
 
     public:
         void init_spi_ports(int esc_pin_1, int esc_pin_2, int esc_pin_3);
@@ -30,7 +31,7 @@ class DCEngine
         void start();
         void stop();
         double temperature();
-        double speedy();
+        double speed();
         void message(char c[5]);
 };
 
