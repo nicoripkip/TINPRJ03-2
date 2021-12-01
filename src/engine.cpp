@@ -13,6 +13,12 @@
 #include "headers/engine.hpp"
 
 
+DCEngine::DCEngine(int ESC_PWM_PIN) {
+    ledcSetup(PWM_CHANNEL, PWM_FREQUENTIE, PWM_RESOLUTION);
+    ledcAttachPin(ESC_PWM_PIN, PWM_CHANNEL);
+}
+
+
 /**
  * @brief Functie voor het declareren van de motor pinnen
  * 
@@ -46,15 +52,17 @@ void DCEngine::stop() {
 
 
 /**
- * @brief 
+ * @brief Functie voor het laten draaien van de motor
  * 
  * @param esc_pin_1 
  * @param esc_pin_2 
  * @param esc_pin_3 
  */
 void DCEngine::run_forward(int esc_pin_1, int esc_pin_2, int esc_pin_3) {
-    if (this->_backForward == true) {
-
+    if (this->_onOff == true) {
+        if (this->_backForward == true) {
+            ledcWrite(esc_pin_2, this->getSpeed());
+        }
     }
 }
 
@@ -67,17 +75,68 @@ void DCEngine::run_forward(int esc_pin_1, int esc_pin_2, int esc_pin_3) {
  * @param esc_pin_3 
  */
 void DCEngine::run_backward(int esc_pin_1, int esc_pin_2, int esc_pin_3) {
-    if (this->_backForward == false) {
+    if (this->_onOff == true) {
+        if (this->_backForward == false) {
 
+        }
     }
 }
 
 
 /**
- * @brief 
+ * @brief Functie voor het zetten van de snelheid
  * 
- * @param c 
+ * @param speed 
  */
-void DCEngine::message(char c[5]) {
-    Serial.println(c);
+void DCEngine::setSpeed(double speed) {
+    this->_speed = speed;
+}
+
+
+/**
+ * @brief Functie voor het ophalen van de snelheid
+ * 
+ * @return double 
+ */
+double DCEngine::getSpeed() {
+    return this->_speed;
+}
+
+
+/**
+ * @brief Functie voor het zetten van de versnelling
+ * 
+ * @param multiplier 
+ */
+void DCEngine::setAcceleration(double multiplier) {
+    this->_multiplier = multiplier;
+}
+
+
+/**
+ * @brief Functie voor het ophalen van de versnelling
+ * 
+ * @return double 
+ */
+double DCEngine::getAcceleration() {
+    return this->_multiplier;
+}
+
+
+/**
+ * @brief Functie voor het versnellen van de motor
+ * 
+ */
+void DCEngine::accelerate() {
+    if (this->getSpeed() == NULL) {
+        this->setSpeed(0.0); 
+    } else {
+        this->setSpeed(this->getSpeed());
+    }
+
+    if (this->getSpeed() < 255) {
+        this->setSpeed(this->getSpeed() * this->getAcceleration());
+    } else if (this->getSpeed() >= 255) {
+        this->setSpeed(255);
+    }
 }
