@@ -14,8 +14,10 @@
 
 
 DCEngine::DCEngine(int ESC_PWM_PIN) {
-    ledcSetup(PWM_CHANNEL, PWM_FREQUENTIE, PWM_RESOLUTION);
-    ledcAttachPin(ESC_PWM_PIN, PWM_CHANNEL);
+    //ledcSetup(PWM_CHANNEL, PWM_FREQUENTIE, PWM_RESOLUTION);
+    //ledcAttachPin(ESC_PWM_PIN, PWM_CHANNEL);
+
+    pinMode(ESC_PWM_PIN, OUTPUT);
 }
 
 
@@ -58,10 +60,14 @@ void DCEngine::stop() {
  * @param esc_pin_2 
  * @param esc_pin_3 
  */
-void DCEngine::run_forward(int esc_pin_1, int esc_pin_2, int esc_pin_3) {
+void DCEngine::run_forward(int esc_pin_2) {
     if (this->_onOff == true) {
-        if (this->_backForward == true) {
-            ledcWrite(esc_pin_2, this->getSpeed());
+        Serial.println("Motor staat aan!");
+
+        if (this->_backForward == false) {
+            Serial.println("PWM schrijf tgj");
+
+            digitalWrite(esc_pin_2, HIGH);
         }
     }
 }
@@ -129,13 +135,19 @@ double DCEngine::getAcceleration() {
  */
 void DCEngine::accelerate() {
     if (this->getSpeed() == NULL) {
-        this->setSpeed(0.0); 
-    } else {
-        this->setSpeed(this->getSpeed());
-    }
+        this->setSpeed(50.0); 
+    } 
 
     if (this->getSpeed() < 255) {
-        this->setSpeed(this->getSpeed() * this->getAcceleration());
+        Serial.print("Versnelling: ");
+        Serial.println(this->getSpeed());
+
+        if (this->getSpeed() != 0.00) {
+            this->setSpeed(this->getSpeed() * this->getAcceleration());
+        } else {
+            this->setSpeed(1.00);
+        }
+        
     } else if (this->getSpeed() >= 255) {
         this->setSpeed(255);
     }

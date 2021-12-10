@@ -25,6 +25,7 @@ class IRSensor : Sensor
         void setDistance(double);
         double getDistance();
         bool crossedLine();
+        void print();
 };
 
 

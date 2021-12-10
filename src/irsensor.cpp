@@ -56,3 +56,13 @@ bool IRSensor::crossedLine() {
     
     return false;
 }
+
+
+void IRSensor::print() {
+    int x = digitalRead(this->getPin());
+
+    Serial.print("Output IR: ");
+    Serial.println(x);
+
+    delay(500);
+}

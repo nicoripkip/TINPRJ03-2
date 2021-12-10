@@ -15,6 +15,8 @@
 #include "./headers/irsensor.hpp"
 
 
+#define REED_PIN 0x01
+
 #define ESC_PIN_1 0x03
 #define ESC_PIN_2 0x04
 #define ESC_PIN_3 0x05
@@ -25,6 +27,12 @@
 #define IR_SENSOR_PIN_4 0x0A
 #define IR_SENSOR_PIN_5 0x0B
 #define IR_SENSOR_PIN_6 0x0C
+
+#define ULTRASOON_PIN_1 0x0E
+#define ULTRASOON_PIN_2 0x0F
+
+#define ACCELEROMETER_PIN 0x11
+#define GYRO_PIN 0x12
 
 
 // Declareer objecten
@@ -37,19 +45,16 @@ IRSensor sensor5(IR_SENSOR_PIN_5); // Kijkt voor een lijn aan de rechterkant voo
 IRSensor sensor6(IR_SENSOR_PIN_6); // Kijkt voor een lijn aan de rechterkant achter van de ACM
 
 
-void initialize_content();
-
-
 /**
  * @brief Functie die alles opzet 
  * 
  */
 void setup() {
   // Declareer pinModes
-  engine.init_spi_ports(ESC_PIN_1, ESC_PIN_2, ESC_PIN_3);
+  // pinMode(ESC_PIN_2, OUTPUT);
 
   // Initialiseer communicatie
-  Serial.begin(115200);
+  Serial.begin(9600);
 }
 
 
@@ -58,15 +63,25 @@ void setup() {
  * 
  */
 void loop() {
-  if (sensor1.crossedLine()) {
-    engine.stop();
-    delay(2000);
-    engine.run_backward(ESC_PIN_1, ESC_PIN_2, ESC_PIN_3);
-  } else if (sensor2.crossedLine()) {
-    engine.stop();
-    delay(2000);
-    engine.run_forward(ESC_PIN_1, ESC_PIN_2, ESC_PIN_3);
-  } else if (sensor1.crossedLine() && sensor2.crossedLine()) {
-    engine.stop();
-  }
-}
+  // if (sensor1.crossedLine()) {
+  //   engine.stop();
+  //   delay(2000);
+  //   engine.run_backward(ESC_PIN_1, ESC_PIN_2, ESC_PIN_3);
+  // } else if (sensor2.crossedLine()) {
+  //   engine.stop();
+  //   delay(2000);
+  //   engine.run_forward(ESC_PIN_1, ESC_PIN_2, ESC_PIN_3);
+  // } else if (sensor1.crossedLine() && sensor2.crossedLine()) {
+  //   engine.stop();
+  // }
+  sensor6.print();
+
+  engine.start();
+  engine.run_forward(ESC_PIN_2);
+  engine.accelerate();
+
+  Serial.println("Testje");
+  // igitalWrite(4, HIGH);
+
+  sensor6.print();
+} 

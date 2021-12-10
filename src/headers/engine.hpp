@@ -15,7 +15,7 @@
 
 #define PWM_CHANNEL 0 // Kanaal waarop het signaal zit
 #define PWM_RESOLUTION 8 // Dit is het aantal bits voor de register van het pwm gebeuren
-#define PWM_FREQUENTIE 1000 // Frequentie is 5KHZ
+#define PWM_FREQUENTIE 5000 // Frequentie is 5KHZ
 
 
 /**
@@ -33,7 +33,7 @@ class DCEngine
     public:
         DCEngine(int);
         void init_spi_ports(int esc_pin_1, int esc_pin_2, int esc_pin_3);
-        void run_forward(int esc_pin_1, int esc_pin_2, int esc_pin_3);
+        void run_forward(int esc_pin_2);
         void run_backward(int esc_pin_1, int esc_pin_2, int esc_pin_3);
         void start();
         void stop();
