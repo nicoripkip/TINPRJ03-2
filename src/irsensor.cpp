@@ -63,6 +63,4 @@ void IRSensor::print() {
 
     Serial.print("Output IR: ");
     Serial.println(x);
-
-    delay(500);
 }

@@ -54,6 +54,8 @@ void setup() {
   // pinMode(ESC_PIN_2, OUTPUT);
 
   // Initialiseer communicatie
+  engine.arm();
+  engine.setSpeed(50);
   Serial.begin(9600);
 }
 

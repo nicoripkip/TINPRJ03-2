@@ -13,11 +13,37 @@
 #include "headers/engine.hpp"
 
 
+/**
+ * @brief Construct a new DCEngine::DCEngine object
+ * 
+ * @param ESC_PWM_PIN 
+ */
 DCEngine::DCEngine(int ESC_PWM_PIN) {
-    //ledcSetup(PWM_CHANNEL, PWM_FREQUENTIE, PWM_RESOLUTION);
-    //ledcAttachPin(ESC_PWM_PIN, PWM_CHANNEL);
+    ledcAttachPin(4, PWM_CHANNEL);                    // Zet de ESC pin als PWM pin
+    ledcSetup(PWM_CHANNEL, PWM_FREQUENTIE, PWM_RESOLUTION);     // Zet de freq, channel en de resolutie goed voor de pin
+}
 
-    pinMode(ESC_PWM_PIN, OUTPUT);
+
+void DCEngine::arm() {
+    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
+    delay(200);
+    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
+    delay(200);
+    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
+    delay(200);
+    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
+    delay(200);
+    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
+    delay(200);
+    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
+    delay(200);
+    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
+    delay(200);
+    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
+    delay(200);
+    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
+    delay(200);
+    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
 }
 
 
@@ -61,13 +87,16 @@ void DCEngine::stop() {
  * @param esc_pin_3 
  */
 void DCEngine::run_forward(int esc_pin_2) {
+    delay(500);
+
     if (this->_onOff == true) {
         Serial.println("Motor staat aan!");
 
         if (this->_backForward == false) {
             Serial.println("PWM schrijf tgj");
 
-            digitalWrite(esc_pin_2, HIGH);
+            ledcWrite(PWM_CHANNEL, 80);
+            // digitalWrite(esc_pin_2, HIGH);
         }
     }
 }
@@ -94,7 +123,7 @@ void DCEngine::run_backward(int esc_pin_1, int esc_pin_2, int esc_pin_3) {
  * 
  * @param speed 
  */
-void DCEngine::setSpeed(double speed) {
+void DCEngine::setSpeed(int speed) {
     this->_speed = speed;
 }
 
@@ -104,7 +133,7 @@ void DCEngine::setSpeed(double speed) {
  * 
  * @return double 
  */
-double DCEngine::getSpeed() {
+int DCEngine::getSpeed() {
     return this->_speed;
 }
 
@@ -134,21 +163,23 @@ double DCEngine::getAcceleration() {
  * 
  */
 void DCEngine::accelerate() {
-    if (this->getSpeed() == NULL) {
-        this->setSpeed(50.0); 
-    } 
+    this->setAcceleration(0.01);
+
+    // if (this->getSpeed() == NULL) {
+    //     this->setSpeed(50); 
+    // } 
 
     if (this->getSpeed() < 255) {
         Serial.print("Versnelling: ");
         Serial.println(this->getSpeed());
 
-        if (this->getSpeed() != 0.00) {
+        if (this->getSpeed() != 0) {
             this->setSpeed(this->getSpeed() * this->getAcceleration());
         } else {
-            this->setSpeed(1.00);
+            this->setSpeed(50);
         }
         
     } else if (this->getSpeed() >= 255) {
-        this->setSpeed(255);
+        this->setSpeed(50);
     }
 }

@@ -13,9 +13,10 @@
 #define ENGINE
 
 
-#define PWM_CHANNEL 0 // Kanaal waarop het signaal zit
-#define PWM_RESOLUTION 8 // Dit is het aantal bits voor de register van het pwm gebeuren
-#define PWM_FREQUENTIE 5000 // Frequentie is 5KHZ
+#define PWM_CHANNEL 1           // Kanaal waarop het signaal zit
+#define PWM_RESOLUTION 8        // Dit is het aantal bits voor de register van het pwm gebeuren
+#define PWM_FREQUENTIE 490      // Frequentie is 5KHZ
+#define ESC_ARM_VALUE 176       // Dit is de waarde om de ESC te armen
 
 
 /**
@@ -27,7 +28,7 @@ class DCEngine
     private:
         bool _onOff;
         bool _backForward;
-        double _speed;
+        int _speed;
         double _multiplier;
 
     public:
@@ -35,11 +36,12 @@ class DCEngine
         void init_spi_ports(int esc_pin_1, int esc_pin_2, int esc_pin_3);
         void run_forward(int esc_pin_2);
         void run_backward(int esc_pin_1, int esc_pin_2, int esc_pin_3);
+        void arm();
         void start();
         void stop();
         double temperature();
-        void setSpeed(double);
-        double getSpeed();
+        void setSpeed(int);
+        int getSpeed();
         void setAcceleration(double);
         double getAcceleration();
         void accelerate();
