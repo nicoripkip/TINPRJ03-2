@@ -13,6 +13,7 @@
 #include "./headers/communication.hpp"
 #include "./headers/engine.hpp"
 #include "./headers/irsensor.hpp"
+#include "./headers/steering.hpp"
 
 
 #define REED_PIN 0x01
@@ -26,13 +27,15 @@
 #define IR_SENSOR_PIN_3 0x09
 #define IR_SENSOR_PIN_4 0x0A
 #define IR_SENSOR_PIN_5 0x0B
-#define IR_SENSOR_PIN_6 0x0C
+#define IR_SENSOR_PIN_6 0x10
 
 #define ULTRASOON_PIN_1 0x0E
 #define ULTRASOON_PIN_2 0x0F
 
 #define ACCELEROMETER_PIN 0x11
 #define GYRO_PIN 0x12
+
+#define SERVO_PIN 0x17
 
 
 // Declareer objecten
@@ -43,6 +46,7 @@ IRSensor sensor3(IR_SENSOR_PIN_3); // Kijkt voor een lijn aan de linkerkant voor
 IRSensor sensor4(IR_SENSOR_PIN_4); // Kijkt voor een lijn aan de linkerkant achter van de ACM
 IRSensor sensor5(IR_SENSOR_PIN_5); // Kijkt voor een lijn aan de rechterkant voor van de ACM
 IRSensor sensor6(IR_SENSOR_PIN_6); // Kijkt voor een lijn aan de rechterkant achter van de ACM
+Steering steering(SERVO_PIN);
 
 
 /**
@@ -50,12 +54,9 @@ IRSensor sensor6(IR_SENSOR_PIN_6); // Kijkt voor een lijn aan de rechterkant ach
  * 
  */
 void setup() {
-  // Declareer pinModes
-  // pinMode(ESC_PIN_2, OUTPUT);
-
-  // Initialiseer communicatie
   engine.arm();
-  engine.setSpeed(50);
+  engine.setSpeed(80);
+  steering.setSpeed(80);
   Serial.begin(9600);
 }
 
@@ -77,13 +78,23 @@ void loop() {
   //   engine.stop();
   // }
   sensor6.print();
+  sensor6.capture();
 
-  engine.start();
-  engine.run_forward(ESC_PIN_2);
-  engine.accelerate();
+  // engine.start();
+  // engine.run_forward(ESC_PIN_2);
+  // engine.accelerate();
 
-  Serial.println("Testje");
   // igitalWrite(4, HIGH);
+  if (sensor6.crossedLine()) {
+    Serial.println("Crossed!");
+    engine.start();
+    engine.run_forward();
+  } else {
+    Serial.println("Not crossed!");
+    engine.stop();
+  }
 
-  sensor6.print();
+  engine.print();
+  steering.turnLeft();
+  delay(500);
 } 

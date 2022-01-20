@@ -29,6 +29,7 @@ class Sensor {
         int getActive();
         void setPin(int);
         int getPin();
+        void capture();
 };
 
 #endif

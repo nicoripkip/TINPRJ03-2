@@ -18,7 +18,8 @@
  * @param pin 
  */
 UltraSoonSensor::UltraSoonSensor(int pin) {
-    pinMode(pin, INPUT);
+    this->setPin(pin);
+    pinMode(this->getPin(), INPUT);
 }
 
 

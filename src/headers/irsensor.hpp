@@ -15,7 +15,7 @@
 #include "headers/sensors.hpp"
 
 
-class IRSensor : Sensor
+class IRSensor : public Sensor
 {
     private:
         double _distance;

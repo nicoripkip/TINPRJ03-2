@@ -17,6 +17,7 @@
 #define PWM_RESOLUTION 8        // Dit is het aantal bits voor de register van het pwm gebeuren
 #define PWM_FREQUENTIE 490      // Frequentie is 5KHZ
 #define ESC_ARM_VALUE 176       // Dit is de waarde om de ESC te armen
+#define ESC_MAX_ARM_SEQUENCE 12 // Dit is de maximale aantal aan ARM signals verzonden naar de ESC
 
 
 /**
@@ -34,8 +35,8 @@ class DCEngine
     public:
         DCEngine(int);
         void init_spi_ports(int esc_pin_1, int esc_pin_2, int esc_pin_3);
-        void run_forward(int esc_pin_2);
-        void run_backward(int esc_pin_1, int esc_pin_2, int esc_pin_3);
+        void run_forward();
+        void run_backward();
         void arm();
         void start();
         void stop();
@@ -46,6 +47,7 @@ class DCEngine
         double getAcceleration();
         void accelerate();
         void message(char c[5]);
+        void print();
 };
 
 #endif

@@ -17,7 +17,7 @@
 #include "headers/sensors.hpp"
 
 
-class UltraSoonSensor : Sensor
+class UltraSoonSensor : public Sensor
 {
     private:
         int _pin;

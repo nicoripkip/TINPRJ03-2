@@ -70,3 +70,12 @@ int Sensor::getPin() {
 void Sensor::setPinMode() {
     pinMode(this->getPin(), INPUT);
 }
+
+
+/**
+ * @brief Methode voor het ophalen van de waardes
+ * 
+ */
+void Sensor::capture() {
+    this->setActive(digitalRead(this->getPin()));
+}

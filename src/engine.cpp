@@ -25,25 +25,12 @@ DCEngine::DCEngine(int ESC_PWM_PIN) {
 
 
 void DCEngine::arm() {
-    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
-    delay(200);
-    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
-    delay(200);
-    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
-    delay(200);
-    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
-    delay(200);
-    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
-    delay(200);
-    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
-    delay(200);
-    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
-    delay(200);
-    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
-    delay(200);
-    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
-    delay(200);
-    ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
+    int i;
+    
+    for (i = 0; i < ESC_MAX_ARM_SEQUENCE; i++) {
+        ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
+        delay(200);
+    }
 }
 
 
@@ -76,6 +63,7 @@ void DCEngine::start() {
  */
 void DCEngine::stop() {
     this->_onOff = false;
+    ledcWrite(PWM_CHANNEL, 0);
 }
 
 
@@ -86,17 +74,12 @@ void DCEngine::stop() {
  * @param esc_pin_2 
  * @param esc_pin_3 
  */
-void DCEngine::run_forward(int esc_pin_2) {
+void DCEngine::run_forward() {
     delay(500);
 
     if (this->_onOff == true) {
-        Serial.println("Motor staat aan!");
-
         if (this->_backForward == false) {
-            Serial.println("PWM schrijf tgj");
-
-            ledcWrite(PWM_CHANNEL, 80);
-            // digitalWrite(esc_pin_2, HIGH);
+            ledcWrite(PWM_CHANNEL, this->getSpeed());
         }
     }
 }
@@ -105,14 +88,11 @@ void DCEngine::run_forward(int esc_pin_2) {
 /**
  * @brief 
  * 
- * @param esc_pin_1 
- * @param esc_pin_2 
- * @param esc_pin_3 
  */
-void DCEngine::run_backward(int esc_pin_1, int esc_pin_2, int esc_pin_3) {
+void DCEngine::run_backward() {
     if (this->_onOff == true) {
-        if (this->_backForward == false) {
-
+        if (this->_backForward == true) {
+            ledcWrite(PWM_CHANNEL, this->getSpeed());
         }
     }
 }
@@ -182,4 +162,20 @@ void DCEngine::accelerate() {
     } else if (this->getSpeed() >= 255) {
         this->setSpeed(50);
     }
+}
+
+
+/**
+ * @brief Functie voor het printen van de data van de motor
+ * 
+ */
+void DCEngine::print() {
+    Serial.print("Motor status: ");
+    Serial.println(this->_onOff);
+    Serial.println();
+    Serial.print("Motor directie: ");
+    Serial.println(this->_backForward);
+    Serial.println();
+    Serial.print("Snelheid van de motor: ");
+    Serial.println(this->getSpeed());
 }
