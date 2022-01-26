@@ -39,14 +39,14 @@
 
 
 // Declareer objecten
-DCEngine engine(ESC_PIN_2); // Maakt een object aan voor de motor
-IRSensor sensor1(IR_SENSOR_PIN_1); // Kijkt voor een lijn voor de ACM
-IRSensor sensor2(IR_SENSOR_PIN_2); // Kijkt voor een lijn achter de ACM
-IRSensor sensor3(IR_SENSOR_PIN_3); // Kijkt voor een lijn aan de linkerkant voor van de ACM
-IRSensor sensor4(IR_SENSOR_PIN_4); // Kijkt voor een lijn aan de linkerkant achter van de ACM
-IRSensor sensor5(IR_SENSOR_PIN_5); // Kijkt voor een lijn aan de rechterkant voor van de ACM
-IRSensor sensor6(IR_SENSOR_PIN_6); // Kijkt voor een lijn aan de rechterkant achter van de ACM
-Steering steering(SERVO_PIN);
+DCEngine engine(ESC_PIN_2);           // Maakt een object aan voor de motor
+IRSensor sensor1(IR_SENSOR_PIN_1);    // Kijkt voor een lijn voor de ACM
+IRSensor sensor2(IR_SENSOR_PIN_2);    // Kijkt voor een lijn achter de ACM
+IRSensor sensor3(IR_SENSOR_PIN_3);    // Kijkt voor een lijn aan de linkerkant voor van de ACM
+IRSensor sensor4(IR_SENSOR_PIN_4);    // Kijkt voor een lijn aan de linkerkant achter van de ACM
+IRSensor sensor5(IR_SENSOR_PIN_5);    // Kijkt voor een lijn aan de rechterkant voor van de ACM
+IRSensor sensor6(IR_SENSOR_PIN_6);    // Kijkt voor een lijn aan de rechterkant achter van de ACM
+Steering steering(SERVO_PIN);         // Object voor het 0------------------------------------------
 
 
 /**
@@ -95,6 +95,10 @@ void loop() {
   }
 
   engine.print();
+  steering.setSpeed(30);
   steering.turnLeft();
+  delay(3000);
+  steering.setSpeed(10);
+  steering.turnRight();
   delay(500);
 } 

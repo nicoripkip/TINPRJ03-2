@@ -46,6 +46,26 @@ int Steering::getSpeed() {
 
 
 /**
+ * @brief Functie voor het zetten van de servo status
+ * 
+ * @param state 
+ */
+void Steering::setState(int state) {
+    this->_servo_state = state;
+}
+
+
+/**
+ * @brief Functie voor het ophalen van de servo status
+ * 
+ * @return int 
+ */
+int Steering::getState() {
+    return this->_servo_state;
+}
+
+
+/**
  * @brief Functie voor het instellen hoeveel graden de motor moet draaien
  * 
  * @param degree 
@@ -70,5 +90,35 @@ int Steering::getTurnDegree() {
  * 
  */
 void Steering::turnLeft() {
-    ledcWrite(PWM_CHANNEL, 80);
+    Serial.println("Draai naar links!");
+    ledcWrite(PWM_CHANNEL, this->getSpeed()); // Max value 30
+    delay(50);
+}
+
+
+/**
+ * @brief Functie voor het naar rechts sturen van de servo
+ * 
+ */
+void Steering::turnRight() {
+    Serial.println("Draai naar rechts!");
+    ledcWrite(PWM_CHANNEL, this->getSpeed()); // Min value 10
+    delay(50);
+}
+
+
+/**
+ * @brief Functie voor het zetten van het nulpunt
+ * 
+ */
+void Steering::setZeroPoint() {
+    switch (this->getState())
+    {
+        case LEFT:
+            this->turnRight();
+        break;
+        case RIGHT:
+            this->turnLeft();
+        break;
+    }
 }

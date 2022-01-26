@@ -17,6 +17,9 @@
 #define PWM_RESOLUTION 8        // Dit is het aantal bits voor de register van het pwm gebeuren
 #define PWM_FREQUENTIE 50       // Frequentie is 5KHZ
 
+#define LEFT 1
+#define RIGHT 2
+
 
 class Steering 
 {
@@ -24,6 +27,9 @@ class Steering
         int _pin;
         int _speed;
         int _turn_degree;
+        int _servo_state;
+        void setState(int);
+        int getState();
 
     public:
         Steering(int);
@@ -33,6 +39,7 @@ class Steering
         int getTurnDegree();
         void turnLeft();
         void turnRight();
+        void setZeroPoint();
 };
 
 

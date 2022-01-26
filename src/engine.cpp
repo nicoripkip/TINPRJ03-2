@@ -79,7 +79,7 @@ void DCEngine::run_forward() {
 
     if (this->_onOff == true) {
         if (this->_backForward == false) {
-            ledcWrite(PWM_CHANNEL, this->getSpeed());
+            ledcWrite(PWM_CHANNEL, 80);
         }
     }
 }
@@ -92,7 +92,8 @@ void DCEngine::run_forward() {
 void DCEngine::run_backward() {
     if (this->_onOff == true) {
         if (this->_backForward == true) {
-            ledcWrite(PWM_CHANNEL, this->getSpeed());
+            // ledcWrite(PWM_CHANNEL, this->getSpeed());
+            ledcWrite(PWM_CHANNEL, 80);
         }
     }
 }
