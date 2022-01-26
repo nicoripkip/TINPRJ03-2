@@ -13,11 +13,8 @@
 #define ENGINE
 
 
-#define PWM_CHANNEL 1           // Kanaal waarop het signaal zit
-#define PWM_RESOLUTION 8        // Dit is het aantal bits voor de register van het pwm gebeuren
-#define PWM_FREQUENTIE 490      // Frequentie is 5KHZ
-#define ESC_ARM_VALUE 176       // Dit is de waarde om de ESC te armen
-#define ESC_MAX_ARM_SEQUENCE 12 // Dit is de maximale aantal aan ARM signals verzonden naar de ESC
+#define RUN_FORWARD 1
+#define RUN_BACKWARD 2
 
 
 /**
@@ -27,27 +24,32 @@
 class DCEngine
 {
     private:
-        bool _onOff;
-        bool _backForward;
-        int _speed;
-        double _multiplier;
+        int _motor1_pin1;
+        int _motor1_pin2;
+        int _motor2_pin1;
+        int _motor2_pin2;
+        bool _life_state;
+        int _moving_state;
 
     public:
-        DCEngine(int);
-        void init_spi_ports(int esc_pin_1, int esc_pin_2, int esc_pin_3);
-        void run_forward();
-        void run_backward();
-        void arm();
+        DCEngine(int, int, int, int);
         void start();
         void stop();
-        double temperature();
-        void setSpeed(int);
-        int getSpeed();
-        void setAcceleration(double);
-        double getAcceleration();
-        void accelerate();
-        void message(char c[5]);
+        void run_forward();
+        void run_backward();
         void print();
+        void set_motor1_pin1(int);
+        int get_motor1_pin1();
+        void set_motor1_pin2(int);
+        int get_motor1_pin2();
+        void set_motor2_pin1(int);
+        int get_motor2_pin1();
+        void set_motor2_pin2(int);
+        int get_motor2_pin2();
+        void set_life_state(bool);
+        bool get_life_state();
+        void set_moving_state(int);
+        int get_moving_state();
 };
 
 #endif

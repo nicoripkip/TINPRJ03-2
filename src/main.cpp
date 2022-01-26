@@ -18,9 +18,10 @@
 
 #define REED_PIN 0x01
 
-#define ESC_PIN_1 0x03
-#define ESC_PIN_2 0x04
-#define ESC_PIN_3 0x05
+#define MOTOR1_PIN1 32
+#define MOTOR1_PIN2 35
+#define MOTOR2_PIN1 0
+#define MOTOR2_PIN2 4
 
 #define IR_SENSOR_PIN_1 0x07
 #define IR_SENSOR_PIN_2 0x08
@@ -39,7 +40,7 @@
 
 
 // Declareer objecten
-DCEngine engine(ESC_PIN_2);           // Maakt een object aan voor de motor
+DCEngine engine(MOTOR1_PIN1, MOTOR1_PIN2, MOTOR2_PIN1, MOTOR2_PIN2);           // Maakt een object aan voor de motor
 IRSensor sensor1(IR_SENSOR_PIN_1);    // Kijkt voor een lijn voor de ACM
 IRSensor sensor2(IR_SENSOR_PIN_2);    // Kijkt voor een lijn achter de ACM
 IRSensor sensor3(IR_SENSOR_PIN_3);    // Kijkt voor een lijn aan de linkerkant voor van de ACM
@@ -54,8 +55,7 @@ Steering steering(SERVO_PIN);         // Object voor het 0----------------------
  * 
  */
 void setup() {
-  engine.arm();
-  engine.setSpeed(80);
+  engine.start();
   steering.setSpeed(80);
   Serial.begin(9600);
 }
@@ -66,33 +66,11 @@ void setup() {
  * 
  */
 void loop() {
-  // if (sensor1.crossedLine()) {
-  //   engine.stop();
-  //   delay(2000);
-  //   engine.run_backward(ESC_PIN_1, ESC_PIN_2, ESC_PIN_3);
-  // } else if (sensor2.crossedLine()) {
-  //   engine.stop();
-  //   delay(2000);
-  //   engine.run_forward(ESC_PIN_1, ESC_PIN_2, ESC_PIN_3);
-  // } else if (sensor1.crossedLine() && sensor2.crossedLine()) {
-  //   engine.stop();
-  // }
   sensor6.print();
   sensor6.capture();
 
-  // engine.start();
-  // engine.run_forward(ESC_PIN_2);
-  // engine.accelerate();
-
-  // igitalWrite(4, HIGH);
-  if (sensor6.crossedLine()) {
-    Serial.println("Crossed!");
-    engine.start();
-    engine.run_forward();
-  } else {
-    Serial.println("Not crossed!");
-    engine.stop();
-  }
+  engine.set_moving_state(1);
+  engine.run_forward();
 
   engine.print();
   steering.setSpeed(30);

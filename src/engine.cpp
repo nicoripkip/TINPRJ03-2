@@ -16,167 +16,238 @@
 /**
  * @brief Construct a new DCEngine::DCEngine object
  * 
- * @param ESC_PWM_PIN 
+ * @param motor1_pin1 
+ * @param motor1_pin2 
+ * @param motor2_pin1 
+ * @param motor2_pin2 
  */
-DCEngine::DCEngine(int ESC_PWM_PIN) {
-    ledcAttachPin(4, PWM_CHANNEL);                    // Zet de ESC pin als PWM pin
-    ledcSetup(PWM_CHANNEL, PWM_FREQUENTIE, PWM_RESOLUTION);     // Zet de freq, channel en de resolutie goed voor de pin
+DCEngine::DCEngine(int motor1_pin1, int motor1_pin2, int motor2_pin1, int motor2_pin2) 
+{
+    this->set_motor1_pin1(motor1_pin1);
+    this->set_motor1_pin2(motor1_pin2);
+    this->set_motor2_pin1(motor2_pin1);
+    this->set_motor2_pin2(motor2_pin2);
+
+    pinMode(this->get_motor1_pin1(), OUTPUT);
+    pinMode(this->get_motor1_pin2(), OUTPUT);
+    pinMode(this->get_motor2_pin1(), OUTPUT);
+    pinMode(this->get_motor2_pin2(), OUTPUT);
 }
 
 
-void DCEngine::arm() {
-    int i;
-    
-    for (i = 0; i < ESC_MAX_ARM_SEQUENCE; i++) {
-        ledcWrite(PWM_CHANNEL, ESC_ARM_VALUE);
-        delay(200);
+/**
+ * @brief Functie om de motor aan te zetten
+ * 
+ */
+void DCEngine::start()
+{
+    if (this->get_life_state() == false) {
+        this->set_life_state(true);
     }
 }
 
 
 /**
- * @brief Functie voor het declareren van de motor pinnen
- * 
- * @param esc_pin_1 
- * @param esc_pin_2 
- * @param esc_pin_3 
- */
-void DCEngine::init_spi_ports(int esc_pin_1, int esc_pin_2, int esc_pin_3) {
-    pinMode(esc_pin_1, OUTPUT);
-    pinMode(esc_pin_2, OUTPUT);
-    pinMode(esc_pin_3, OUTPUT);
-}
-
-
-/**
- * @brief Functie voor het starten van de motor
+ * @brief Functie om de motor uit te zetten
  * 
  */
-void DCEngine::start() {
-    this->_onOff = true;
-}
+void DCEngine::stop()
+{
+    if (this->get_life_state() == true) {
+        this->set_life_state(false);
 
-
-/**
- * @brief Functie voor het stoppen van de motor
- * 
- */
-void DCEngine::stop() {
-    this->_onOff = false;
-    ledcWrite(PWM_CHANNEL, 0);
-}
-
-
-/**
- * @brief Functie voor het laten draaien van de motor
- * 
- * @param esc_pin_1 
- * @param esc_pin_2 
- * @param esc_pin_3 
- */
-void DCEngine::run_forward() {
-    delay(500);
-
-    if (this->_onOff == true) {
-        if (this->_backForward == false) {
-            ledcWrite(PWM_CHANNEL, 80);
-        }
+        digitalWrite(this->get_motor1_pin1(), LOW);
+        digitalWrite(this->get_motor1_pin2(), LOW);
+        digitalWrite(this->get_motor2_pin1(), LOW);
+        digitalWrite(this->get_motor2_pin2(), LOW);
     }
 }
 
 
 /**
- * @brief 
+ * @brief Functie voor het vooruit laten draaien van de motor
  * 
  */
-void DCEngine::run_backward() {
-    if (this->_onOff == true) {
-        if (this->_backForward == true) {
-            // ledcWrite(PWM_CHANNEL, this->getSpeed());
-            ledcWrite(PWM_CHANNEL, 80);
-        }
+void DCEngine::run_forward()
+{
+    if (this->get_life_state() == false) {
+        Serial.println("[error]\tDe motor moet nog eerst gestart worden!");
+        return;
+    }
+
+    if (this->get_moving_state() == RUN_FORWARD) {
+        digitalWrite(this->get_motor1_pin1(), HIGH);
+        digitalWrite(this->get_motor1_pin2(), LOW);
+        digitalWrite(this->get_motor2_pin1(), HIGH);
+        digitalWrite(this->get_motor2_pin2(), LOW);
     }
 }
 
 
 /**
- * @brief Functie voor het zetten van de snelheid
- * 
- * @param speed 
- */
-void DCEngine::setSpeed(int speed) {
-    this->_speed = speed;
-}
-
-
-/**
- * @brief Functie voor het ophalen van de snelheid
- * 
- * @return double 
- */
-int DCEngine::getSpeed() {
-    return this->_speed;
-}
-
-
-/**
- * @brief Functie voor het zetten van de versnelling
- * 
- * @param multiplier 
- */
-void DCEngine::setAcceleration(double multiplier) {
-    this->_multiplier = multiplier;
-}
-
-
-/**
- * @brief Functie voor het ophalen van de versnelling
- * 
- * @return double 
- */
-double DCEngine::getAcceleration() {
-    return this->_multiplier;
-}
-
-
-/**
- * @brief Functie voor het versnellen van de motor
+ * @brief Functie voor het achteruit laten draaien van de motor
  * 
  */
-void DCEngine::accelerate() {
-    this->setAcceleration(0.01);
+void DCEngine::run_backward()
+{
+    if (this->get_life_state() == false) {
+        Serial.println("[error]\tDe motor moet nog eerst gestart worden!");
+        return;
+    }
 
-    // if (this->getSpeed() == NULL) {
-    //     this->setSpeed(50); 
-    // } 
-
-    if (this->getSpeed() < 255) {
-        Serial.print("Versnelling: ");
-        Serial.println(this->getSpeed());
-
-        if (this->getSpeed() != 0) {
-            this->setSpeed(this->getSpeed() * this->getAcceleration());
-        } else {
-            this->setSpeed(50);
-        }
-        
-    } else if (this->getSpeed() >= 255) {
-        this->setSpeed(50);
+    if (this->get_moving_state() == RUN_BACKWARD) {
+        digitalWrite(this->get_motor1_pin1(), LOW);
+        digitalWrite(this->get_motor1_pin2(), HIGH);
+        digitalWrite(this->get_motor2_pin1(), LOW);
+        digitalWrite(this->get_motor2_pin2(), HIGH);
     }
 }
 
 
 /**
- * @brief Functie voor het printen van de data van de motor
+ * @brief Functie voor het printen van gegevens van de motor 
  * 
  */
-void DCEngine::print() {
-    Serial.print("Motor status: ");
-    Serial.println(this->_onOff);
+void DCEngine::print()
+{
+    Serial.println("[info]\tGegevens van de motor!");
     Serial.println();
-    Serial.print("Motor directie: ");
-    Serial.println(this->_backForward);
-    Serial.println();
-    Serial.print("Snelheid van de motor: ");
-    Serial.println(this->getSpeed());
+    Serial.print("[info]\tMotorstatus: ");
+    Serial.println(this->get_life_state());
+    Serial.print("[info]\tRichting van draaien: ");
+    Serial.println(this->get_moving_state());
+}
+
+
+/**
+ * @brief Functie voor het zetten van motor 1 pin 1
+ * 
+ * @param pin 
+ */
+void DCEngine::set_motor1_pin1(int pin)
+{
+    this->_motor1_pin1 = pin;
+}
+
+
+/**
+ * @brief Functie voor het ophalen van motor 1 pin 1
+ * 
+ * @return int 
+ */
+int DCEngine::get_motor1_pin1()
+{
+    return this->_motor1_pin1;
+}
+
+
+/**
+ * @brief Functie voor het zetten van motor 1 pin 2
+ * 
+ * @param pin 
+ */
+void DCEngine::set_motor1_pin2(int pin)
+{
+    this->_motor1_pin2 = pin;
+}
+
+
+/**
+ * @brief Functie voor het ophalen van motor 1 pin 2
+ * 
+ * @return int 
+ */
+int DCEngine::get_motor1_pin2()
+{
+    return this->_motor1_pin2;
+}
+
+
+/**
+ * @brief Functie voor het zetten van motor 2 pin 1
+ * 
+ * @param pin 
+ */
+void DCEngine::set_motor2_pin1(int pin)
+{
+    this->_motor2_pin1 = pin;
+}
+
+
+/**
+ * @brief Functie voor het ophalen van motor 2 pin 1
+ * 
+ * @return int 
+ */
+int DCEngine::get_motor2_pin1()
+{
+    return this->_motor2_pin1;
+}
+
+
+/**
+ * @brief Functie voor het zetten van motor 2 pin 2
+ * 
+ * @param pin 
+ */
+void DCEngine::set_motor2_pin2(int pin)
+{
+    this->_motor2_pin2 = pin;
+}
+
+
+/**
+ * @brief Functie voor het ophalen van motor 2 pin 2
+ * 
+ * @return int 
+ */
+int DCEngine::get_motor2_pin2()
+{
+    return this->_motor2_pin2;   
+}
+
+
+/**
+ * @brief Functie voor het zetten van de levensstaat
+ * 
+ * @param state 
+ */
+void DCEngine::set_life_state(bool state)
+{
+    this->_life_state = state;
+}
+
+
+/**
+ * @brief Functie voor het ophalen van de levensstaat
+ * 
+ * @return true 
+ * @return false 
+ */
+bool DCEngine::get_life_state()
+{
+    return this->_life_state;
+}
+
+
+/**
+ * @brief Functie voor het zetten van de beweginsstaat
+ * 
+ * @param state 
+ */
+void DCEngine::set_moving_state(int state)
+{
+    this->_moving_state = state;
+}
+
+
+/**
+ * @brief Functie voor het ophalen van de moving state
+ * 
+ * @return true 
+ * @return false 
+ */
+int DCEngine::get_moving_state()
+{
+    return this->_moving_state;
 }
