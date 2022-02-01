@@ -52,10 +52,70 @@ void send_data()
  * @brief Get the data object
  * 
  */
-String get_data()
+String get_left()
 {
     Serial.println("[info]\tHaal data op van de api!");
-    String uri = "http://192.168.2.8:8080/api/get";
+    String uri = "http://192.168.2.8:8080/api/get_left";
+    http.begin(uri);
+    http.GET();
+
+    return http.getString();
+}
+
+
+/**
+ * @brief Get the data object
+ * 
+ */
+String get_right()
+{
+    Serial.println("[info]\tHaal data op van de api!");
+    String uri = "http://192.168.2.8:8080/api/get_right";
+    http.begin(uri);
+    http.GET();
+
+    return http.getString();
+}
+
+
+/**
+ * @brief Get the data object
+ * 
+ */
+String get_up()
+{
+    Serial.println("[info]\tHaal data op van de api!");
+    String uri = "http://192.168.2.8:8080/api/get_up";
+    http.begin(uri);
+    http.GET();
+
+    return http.getString();
+}
+
+
+/**
+ * @brief Get the data object
+ * 
+ */
+String get_down()
+{
+    Serial.println("[info]\tHaal data op van de api!");
+    String uri = "http://192.168.2.8:8080/api/get_down";
+    http.begin(uri);
+    http.GET();
+
+    return http.getString();
+}
+
+
+/**
+ * @brief Get the data object
+ * 
+ */
+String get_activate()
+{
+    Serial.println("[info]\tHaal data op van de api!");
+    String uri = "http://192.168.2.8:8080/api/get_activate";
     http.begin(uri);
     http.GET();
 

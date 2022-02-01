@@ -40,6 +40,7 @@
 
 
 void controller(); 
+void check_running_state(int);
 
 
 // Declareer objecten
@@ -51,6 +52,9 @@ IRSensor sensor4(IR_SENSOR_PIN_4);    // Kijkt voor een lijn aan de linkerkant a
 IRSensor sensor5(IR_SENSOR_PIN_5);    // Kijkt voor een lijn aan de rechterkant voor van de ACM
 IRSensor sensor6(IR_SENSOR_PIN_6);    // Kijkt voor een lijn aan de rechterkant achter van de ACM
 Steering steering(SERVO_PIN);         // Object voor het 0------------------------------------------
+
+
+int activate_state = 0;
 
 
 /**
@@ -72,22 +76,24 @@ void setup()
  */
 void loop() 
 {
-  // controller();
+  controller();
+
+  // check_running_state();
 
   sensor6.print();
   sensor6.capture();
 
-  engine.set_moving_state(0);
+  // engine.set_moving_state(0);
   // engine.stop();
-  engine.run_forward();
+  // engine.run_forward();
 
   engine.print();
-  steering.setSpeed(30);
-  steering.turnLeft();
-  delay(3000);
-  steering.setSpeed(10);
-  steering.turnRight();
-  delay(500);
+  // steering.setSpeed(27);
+  // steering.turnLeft();
+  // delay(3000);
+  // steering.setSpeed(17);
+  // steering.turnRight();
+  // delay(500);
 }
 
 
@@ -130,25 +136,79 @@ void detect_ravine()
  */
 void controller() 
 {
-  String response = get_data();
+  String response_left = get_left();
+  String response_right = get_right();
+  String response_up = get_up();
+  String response_down = get_down();
+  String response_activate = get_activate();
 
-  DynamicJsonDocument document(2048);
-  DeserializationError error = deserializeJson(document, response);
-  if (error) {
+  Serial.println(response_activate);
+
+  DynamicJsonDocument document_left(2048);
+  DynamicJsonDocument document_right(2048);
+  DynamicJsonDocument document_up(2048);
+  DynamicJsonDocument document_down(2048);
+  DynamicJsonDocument document_activate(2048);
+
+  DeserializationError error_left = deserializeJson(document_left, response_left);
+  DeserializationError error_right = deserializeJson(document_right, response_right);
+  DeserializationError error_up = deserializeJson(document_up, response_up);
+  DeserializationError error_down = deserializeJson(document_down, response_down);
+  DeserializationError error_activate = deserializeJson(document_activate, response_activate);
+  
+  if (error_left || error_right || error_up || error_down || error_activate) {
       Serial.println("[error]\tJson kan niet worden omgezet!");
   }
 
-  end_http();
+  uint8_t left = document_left["value"].as<int>();
+  uint8_t right = document_right["value"].as<int>();
+  uint8_t up = document_up["value"].as<int>();
+  uint8_t down = document_down["value"].as<int>();
 
-  if (strcmp(document["key"].as<const char*>(), "arrow-left")==1) {
-    Serial.println("[ok]\tACM stuurt naar links!");
-  } else if (strcmp(document["key"].as<const char*>(), "arrow-right")==1) {
-    Serial.println("[info]\tACM stuurt naar rechts!");
-  } else if (strcmp(document["key"].as<const char*>(), "arrow-up")) {
-    Serial.println("[info]\tACM rijdt naar voren");
-  } else if (strcmp(document["key"].as<const char*>(), "arrow-down")) {
-    
+  activate_state = document_activate["value"].as<int>();
+
+  check_running_state(document_activate["value"].as<int>());
+
+  if (up != 0 && down == 0) {
+    Serial.println("[succes]\tACM rijdt vooruit!");
+    engine.set_moving_state(1);
+    engine.run_forward();
+  } else if (up == 0 && down != 0) {
+    Serial.println("[succes]\tACM rijdt achteruit!");
+    engine.set_moving_state(2);
+    engine.run_backward();
   } else {
-    Serial.println("[error]\tACM snapt instructie niet!");
+    Serial.println("[error]\t\tACM staat stil!");
+    engine.stop();
+  }
+
+  if (left != 0 && right == 0) {
+    steering.setSpeed(17);
+    steering.turnRight();
+  } else if (left == 0 && right != 0) {
+    steering.setSpeed(27);
+    steering.turnRight();
+  } else if (left == 0 && right == 0) {
+    steering.setZeroPoint();
+  } else {
+    steering.setZeroPoint();
+  }
+}
+
+
+/**
+ * @brief Functie om te kijken of de ACM kan rijden
+ * 
+ */
+void check_running_state(int state)
+{
+  switch (state)
+  {
+    case 0:
+      engine.stop();
+    break;
+    case 1:
+      engine.start();
+    break;
   }
 }
