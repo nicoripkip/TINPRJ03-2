@@ -50,7 +50,10 @@ double IRSensor::getDistance() {
  * @return false 
  */
 bool IRSensor::crossedLine() {
-    if (this->getActive() == LOW) {
+        Serial.print("Output IR: ");
+    Serial.println(this->getActive());
+
+    if (this->getActive() == HIGH) {
         return true;
     }
     

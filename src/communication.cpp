@@ -55,7 +55,7 @@ void send_data()
 String get_left()
 {
     Serial.println("[info]\tHaal data op van de api!");
-    String uri = "http://192.168.2.8:8080/api/get_left";
+    String uri = "http://145.24.238.4:8080/api/get_left";
     http.begin(uri);
     http.GET();
 
@@ -70,7 +70,7 @@ String get_left()
 String get_right()
 {
     Serial.println("[info]\tHaal data op van de api!");
-    String uri = "http://192.168.2.8:8080/api/get_right";
+    String uri = "http://145.24.238.4:8080/api/get_right";
     http.begin(uri);
     http.GET();
 
@@ -85,7 +85,7 @@ String get_right()
 String get_up()
 {
     Serial.println("[info]\tHaal data op van de api!");
-    String uri = "http://192.168.2.8:8080/api/get_up";
+    String uri = "http://145.24.238.4:8080/api/get_up";
     http.begin(uri);
     http.GET();
 
@@ -100,7 +100,7 @@ String get_up()
 String get_down()
 {
     Serial.println("[info]\tHaal data op van de api!");
-    String uri = "http://192.168.2.8:8080/api/get_down";
+    String uri = "http://145.24.238.4:8080/api/get_down";
     http.begin(uri);
     http.GET();
 
@@ -115,7 +115,7 @@ String get_down()
 String get_activate()
 {
     Serial.println("[info]\tHaal data op van de api!");
-    String uri = "http://192.168.2.8:8080/api/get_activate";
+    String uri = "http://145.24.238.4:8080/api/get_activate";
     http.begin(uri);
     http.GET();
 

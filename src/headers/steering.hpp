@@ -13,12 +13,13 @@
 #define STEERING
 
 
-#define PWM_CHANNEL 2           // Kanaal waarop het signaal zit
-#define PWM_RESOLUTION 8        // Dit is het aantal bits voor de register van het pwm gebeuren
-#define PWM_FREQUENTIE 50       // Frequentie is 5KHZ
+#define     PWM_CHANNEL         2           // Kanaal waarop het signaal zit
+#define     PWM_RESOLUTION      8        // Dit is het aantal bits voor de register van het pwm gebeuren
+#define     PWM_FREQUENTIE      50       // Frequentie is 5KHZ
 
-#define LEFT 1
-#define RIGHT 2
+#define     LEFT                1
+#define     RIGHT               2
+#define     MIDDLE              3
 
 
 class Steering 
@@ -29,7 +30,6 @@ class Steering
         int _turn_degree;
         int _servo_state;
         void setState(int);
-        int getState();
 
     public:
         Steering(int);
@@ -37,9 +37,10 @@ class Steering
         int getSpeed();
         void setTurnDegree(int);
         int getTurnDegree();
-        void turnLeft();
-        void turnRight();
+        void turnLeft(int);
+        void turnRight(int);
         void setZeroPoint();
+        int getState();
 };
 
 

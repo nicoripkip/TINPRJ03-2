@@ -89,8 +89,10 @@ int Steering::getTurnDegree() {
  * @brief Functie voor het naar links sturen van de servo
  * 
  */
-void Steering::turnLeft() {
+void Steering::turnLeft(int speed) {
     Serial.println("Draai naar links!");
+    this->setSpeed(speed); // default 27
+    this->setState(LEFT);
     ledcWrite(PWM_CHANNEL, this->getSpeed()); // Max value 30
     delay(50);
 }
@@ -100,8 +102,10 @@ void Steering::turnLeft() {
  * @brief Functie voor het naar rechts sturen van de servo
  * 
  */
-void Steering::turnRight() {
+void Steering::turnRight(int speed) {
     Serial.println("Draai naar rechts!");
+    this->setSpeed(speed); // default 17
+    this->setState(RIGHT);
     ledcWrite(PWM_CHANNEL, this->getSpeed()); // Min value 10
     delay(50);
 }
@@ -114,11 +118,19 @@ void Steering::turnRight() {
 void Steering::setZeroPoint() {
     switch (this->getState())
     {
+        // Als de voorwielen naar links gedraait staan
         case LEFT:
-            this->turnRight();
+            this->setState(MIDDLE);
+            this->turnRight(22);
         break;
+        // Als de voorwielen naar rechts gedraait staan
         case RIGHT:
-            this->turnLeft();
+            this->setState(MIDDLE);
+            this->turnLeft(22);
+        break;
+        // Als de voorwielen gecentreerd staan
+        case MIDDLE:
+            return;
         break;
     }
 }

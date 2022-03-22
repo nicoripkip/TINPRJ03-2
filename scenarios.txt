@@ -1,0 +1,115 @@
+Naar rechts sturen bij bocht
+- Rij vooruit
+- Detecteer lijn
+- Stop ACM
+- Draai wielen naar links
+- Rij achteruit
+- Detecteer lijn
+- Stop ACM
+- Draai wielen naar Rechts
+- Rij vooruit
+
+
+Naar links sturen bij bocht
+- Rij vooruit
+- Detecteer lijn
+- Draai wielen naar rechts
+- Rij achteruit
+- Detecteer lijn
+- Draai wielen naar links
+- Rij vooruit
+
+Als er weer een lijn gedetecteerd wordt herhaal vanaf stap 2
+
+
+Rij om een object heen via links
+- Rij vooruit
+- Detecteer object
+- Stop ACM
+- Rij achteruit voor 1s
+- Stuur Naar links als er geen lijn gedetecteerd wordt
+- Rij vooruit voor 2s
+- Stuur naar rechts
+- Rij vooruit  voor 2 seconden
+- Stuur naar rechts
+- Rij vooruit voor 2s
+- Stuur naar links
+- Rij vooruit
+
+Rij om een object heen via rechts
+- Rij vooruit
+- Detecteer object
+- Stop ACM
+- Rij achteruit voor 1s
+- Stuur Naar rechts als er geen lijn gedetecteerd wordt
+- Rij vooruit voor 2s
+- Stuur naar links
+- Rij vooruit  voor 2 seconden
+- Stuur naar links 
+- Rij vooruit voor 2s
+- Stuur naar rechts
+- Rij vooruit
+
+Rij om een object heen via links met lijn
+- Rij vooruit
+- Detecteer object
+- Stop ACM
+- Rij achteruit voor 1s
+- Stuur Naar links als er geen lijn gedetecteerd wordt
+- Rij vooruit
+- Detecteer lijn
+- rij achteruit voor 1s
+- Stuur naar rechts
+- Rij vooruit  voor 2 seconden
+- Stuur naar rechts
+- Rij vooruit voor 2s
+- Stuur naar links
+- Rij vooruit
+
+Rij om een object heen via links met lijn
+- Rij vooruit
+- Detecteer object
+- Stop ACM
+- Rij achteruit voor 1s
+- Stuur Naar rechts als er geen lijn gedetecteerd wordt
+- Rij vooruit
+- Detecteer lijn
+- rij achteruit voor 1s
+- Stuur naar links
+- Rij vooruit  voor 2 seconden
+- Stuur naar links
+- Rij vooruit voor 2s
+- Stuur naar rechts
+- Rij vooruit
+
+
+
+Keren doormiddel van steken via links
+- Stop ACM
+- Stuur naar links
+- Rij vooruit
+- detecteer lijn
+- Stop ACM
+- Stuur naar rechts
+- Rij achteruit
+- Detecteer lijn
+- Stop ACM
+- Stuur naar links
+- rij vooruit
+- Stuur bij waar nodig
+
+Keren doormiddel van steken via links
+- Stop ACM
+- Stuur naar rechts
+- Rij vooruit
+- detecteer lijn
+- Stop ACM
+- Stuur naar links
+- Rij achteruit
+- Detecteer lijn
+- Stop ACM
+- Stuur naar rechts
+- rij vooruit
+- Stuur bij waar nodig
+
+Als er na 3 keer nog een lijn gedetecteerd wordt herhaal van stap 2 wanneer geen lijn meer gedetecteerd wordt

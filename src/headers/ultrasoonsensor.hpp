@@ -20,11 +20,12 @@
 class UltraSoonSensor : public Sensor
 {
     private:
-        int _pin;
+        int _pin1;
+        int _pin2;
         int _distance;
 
     public:
-        UltraSoonSensor(int);
+        UltraSoonSensor(int, int);
         int getDistance();
         void setDistance(int);
         bool detectObstacle();
