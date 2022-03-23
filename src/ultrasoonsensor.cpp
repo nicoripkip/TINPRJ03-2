@@ -31,7 +31,7 @@ UltraSoonSensor::UltraSoonSensor(int pin1, int pin2) {
  * 
  * @return int 
  */
-int UltraSoonSensor::getDistance() {
+float UltraSoonSensor::getDistance() {
     return this->_distance;
 }
 
@@ -41,7 +41,7 @@ int UltraSoonSensor::getDistance() {
  * 
  * @param distance int
  */
-void UltraSoonSensor::setDistance(int distance) {
+void UltraSoonSensor::setDistance(float distance) {
     this->_distance = distance;
 }
 
@@ -53,13 +53,19 @@ void UltraSoonSensor::setDistance(int distance) {
  * @return false 
  */
 bool UltraSoonSensor::detectObstacle() {
-    digitalWrite(this->_pin1, HIGH);
+    digitalWrite(this->_pin2, HIGH);
     delayMicroseconds(10);
-    digitalWrite(this->_pin1, LOW);
+    digitalWrite(this->_pin2, LOW);
 
-    int duration = pulseIn(this->_pin2, HIGH);
+    float duration = pulseIn(this->_pin1, HIGH);
     this->setDistance((duration/2) / 29.1);
     
     Serial.print("[info]\tAfstand: ");
     Serial.println(this->getDistance());
+
+    if (this->getDistance() <= 12.00) {
+        return true;
+    }
+
+    return false;
 }

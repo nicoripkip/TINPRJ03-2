@@ -29,8 +29,8 @@
 #define   IR_SENSOR_PIN_3       17
 #define   IR_SENSOR_PIN_4       27
 
-#define   ULTRASOON_PIN_1       35
-#define   ULTRASOON_PIN_2       34
+#define   ULTRASOON_PIN_1       15
+#define   ULTRASOON_PIN_2       12
 
 #define   SERVO_PIN             0x17
 
@@ -38,6 +38,7 @@
 void controller(); 
 void check_running_state(int);
 void detect_line();
+void detect_object();
 
 
 // Declareer objecten
@@ -90,6 +91,10 @@ void loop()
   _sensor2 = digitalRead(IR_SENSOR_PIN_2);
   _sensor3 = digitalRead(IR_SENSOR_PIN_3);
   _sensor4 = digitalRead(IR_SENSOR_PIN_4);
+
+  digitalWrite(12, HIGH);
+
+  detect_object();
 
   engine.set_moving_state(1);
 
@@ -269,5 +274,37 @@ void check_running_state(int state)
     case 1:
       engine.start();
     break;
+  }
+}
+
+
+/**
+ * @brief 
+ * 
+ */
+void detect_object()
+{
+  if (soon1.detectObstacle()) {
+    engine.stop();
+    delay(2000);
+    steering.setZeroPoint();
+    engine.start();
+    engine.set_moving_state(2);
+
+    unsigned short number = random(0, 300);
+
+    if (number <= 149) {
+      steering.turnLeft(27);
+    } else if (number >= 150) {
+      steering.turnRight(17);
+    }
+
+    engine.run_backward();
+    delay(300);
+    engine.stop();
+    steering.setZeroPoint();
+    engine.start();
+    engine.set_moving_state(1);
+    engine.run_forward();
   }
 }
