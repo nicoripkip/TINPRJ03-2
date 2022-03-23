@@ -54,8 +54,11 @@ int activate_state = 1;
 volatile bool engine_state = true;
 volatile bool front_detected = false;
 volatile bool back_detected = false;
-volatile bool left_detected = false;
-volatile bool right_detected = false;
+
+volatile unsigned short _sensor1;
+volatile unsigned short _sensor2;
+volatile unsigned short _sensor3;
+volatile unsigned short _sensor4;
 
 
 /**
@@ -83,39 +86,50 @@ void setup()
  */
 void loop() 
 {
+  _sensor1 = digitalRead(IR_SENSOR_PIN_1);
+  _sensor2 = digitalRead(IR_SENSOR_PIN_2);
+  _sensor3 = digitalRead(IR_SENSOR_PIN_3);
+  _sensor4 = digitalRead(IR_SENSOR_PIN_4);
+
   engine.set_moving_state(1);
 
   if (engine_state == false && front_detected == true && back_detected == false) {
+    engine.stop();
+    delay(2000);
     steering.setZeroPoint();
     engine.start();
     engine.set_moving_state(2);
 
-    if (left_detected == true && right_detected == false) {
-      // steering.turnLeft(27);
-    } else if (right_detected == true && left_detected == false) {
-      // steering.turnRight(17);
+    if (_sensor2 != 0 && _sensor1 == 0) {
+      steering.turnLeft(27);
+    } else if (_sensor1 != 0 && _sensor2 == 0) {
+      steering.turnRight(17);
     } else {
-      steering.setZeroPoint();
+      unsigned short number = random(0, 300);
+
+      if (number <= 149) {
+        steering.turnLeft(27);
+      } else if (number >= 150) {
+        steering.turnRight(17);
+      }
     }
 
     engine.run_backward();
-    interrupts();
+    // interrupts();
 
     engine_state = true;
     front_detected = false;
     back_detected = false;
-
-    delay(500);
-    engine.set_moving_state(1);
-    engine.run_forward();
   } else if (engine_state == false && back_detected == true && front_detected == false) {
+    engine.stop();
+    delay(2000);
     steering.setZeroPoint();
     engine.start();
     engine.set_moving_state(1);
 
-    if (left_detected == true && right_detected == false) {
+    if (_sensor4 != 0 && _sensor3 == 0) {
       steering.turnLeft(27);
-    } else if (right_detected == true && left_detected == false) {
+    } else if (_sensor3 != 0 && _sensor4 == 0) {
       steering.turnRight(17);
     } else {
       steering.setZeroPoint();
@@ -127,10 +141,6 @@ void loop()
     engine_state = true;
     front_detected = false;
     back_detected = false;
-
-    delay(500);
-    engine.set_moving_state(2);
-    engine.run_backward();
   }
 
   switch (engine_state) {
@@ -141,9 +151,6 @@ void loop()
       engine.stop();
     break;
   }
-
-  Serial.print("Motor status loop: ");
-  Serial.println(engine_state);
 }
 
 
@@ -153,28 +160,33 @@ void loop()
  */
 void detect_line()
 {
-   noInterrupts();
+  noInterrupts();
+
+  _sensor1 = digitalRead(IR_SENSOR_PIN_1);
+  _sensor2 = digitalRead(IR_SENSOR_PIN_2);
+  _sensor3 = digitalRead(IR_SENSOR_PIN_3);
+  _sensor4 = digitalRead(IR_SENSOR_PIN_4);
 
   // Rechtsboven
-  if (!sensor1.crossedLine()) {
+  if (_sensor1 != 0) {          // Rechtsboven
     engine_state = false;
     front_detected = true;
     back_detected = false;
-    right_detected = true;
-  } else if (!sensor2.crossedLine()) {
+  } else if (_sensor2 != 0) {  // Linksboven
     engine_state = false;
     front_detected = true;
     back_detected = false;
-    left_detected = true;
-  } else if (!sensor3.crossedLine()) {
+  } else if (_sensor3 != 0) { // Rechtsonder
     engine_state = false;
     back_detected = true;
     front_detected = false;
-  } else if (!sensor4.crossedLine()) {
+  } else if (_sensor4 != 0) { // linksonder
     engine_state = false;
     back_detected = true;
     front_detected = false;
   }
+
+  interrupts();
 }
 
 
