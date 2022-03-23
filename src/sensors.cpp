@@ -68,7 +68,7 @@ int Sensor::getPin() {
  * 
  */
 void Sensor::setPinMode() {
-    pinMode(this->getPin(), INPUT);
+    pinMode(this->getPin(), INPUT_PULLUP);
 }
 
 

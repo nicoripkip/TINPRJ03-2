@@ -27,25 +27,17 @@
 #define   IR_SENSOR_PIN_1       22
 #define   IR_SENSOR_PIN_2       21
 #define   IR_SENSOR_PIN_3       17
-#define   IR_SENSOR_PIN_4       16
-#define   IR_SENSOR_PIN_5       14
-#define   IR_SENSOR_PIN_6       27
+#define   IR_SENSOR_PIN_4       27
 
 #define   ULTRASOON_PIN_1       35
 #define   ULTRASOON_PIN_2       34
-
-#define   ACCELEROMETER_PIN     0x11
-#define   GYRO_PIN              0x12
 
 #define   SERVO_PIN             0x17
 
 
 void controller(); 
 void check_running_state(int);
-void automate_driving();
-void turn_corners();
-void detect_object();
-void detect_ravine();
+void detect_line();
 
 
 // Declareer objecten
@@ -54,13 +46,16 @@ IRSensor sensor1(IR_SENSOR_PIN_1);    // Kijkt voor een lijn voor de ACM
 IRSensor sensor2(IR_SENSOR_PIN_2);    // Kijkt voor een lijn achter de ACM
 IRSensor sensor3(IR_SENSOR_PIN_3);    // Kijkt voor een lijn aan de linkerkant voor van de ACM
 IRSensor sensor4(IR_SENSOR_PIN_4);    // Kijkt voor een lijn aan de linkerkant achter van de ACM
-IRSensor sensor5(IR_SENSOR_PIN_5);    // Kijkt voor een lijn aan de rechterkant voor van de ACM
-IRSensor sensor6(IR_SENSOR_PIN_6);    // Kijkt voor een lijn aan de rechterkant achter van de ACM
 Steering steering(SERVO_PIN);         // Object voor het 0------------------------------------------
 UltraSoonSensor soon1(ULTRASOON_PIN_1, ULTRASOON_PIN_2);
 
 
 int activate_state = 1;
+volatile bool engine_state = true;
+volatile bool front_detected = false;
+volatile bool back_detected = false;
+volatile bool left_detected = false;
+volatile bool right_detected = false;
 
 
 /**
@@ -70,9 +65,15 @@ int activate_state = 1;
 void setup() 
 {
   Serial.begin(9600);
-  wifi_init();
+  // wifi_init();
+  
+  attachInterrupt(digitalPinToInterrupt(IR_SENSOR_PIN_1), detect_line, FALLING);
+  attachInterrupt(digitalPinToInterrupt(IR_SENSOR_PIN_2), detect_line, FALLING);
+  attachInterrupt(digitalPinToInterrupt(IR_SENSOR_PIN_3), detect_line, FALLING);
+  attachInterrupt(digitalPinToInterrupt(IR_SENSOR_PIN_4), detect_line, FALLING);
 
   steering.setZeroPoint();
+  delay(1000);
 }
 
 
@@ -82,26 +83,98 @@ void setup()
  */
 void loop() 
 {
-  if (activate_state==1) {
-    if (digitalRead(IR_SENSOR_PIN_1)==1) {
-      detect_ravine();
+  engine.set_moving_state(1);
+
+  if (engine_state == false && front_detected == true && back_detected == false) {
+    steering.setZeroPoint();
+    engine.start();
+    engine.set_moving_state(2);
+
+    if (left_detected == true && right_detected == false) {
+      // steering.turnLeft(27);
+    } else if (right_detected == true && left_detected == false) {
+      // steering.turnRight(17);
+    } else {
+      steering.setZeroPoint();
     }
+
+    engine.run_backward();
+    interrupts();
+
+    engine_state = true;
+    front_detected = false;
+    back_detected = false;
+
+    delay(500);
+    engine.set_moving_state(1);
+    engine.run_forward();
+  } else if (engine_state == false && back_detected == true && front_detected == false) {
+    steering.setZeroPoint();
+    engine.start();
+    engine.set_moving_state(1);
+
+    if (left_detected == true && right_detected == false) {
+      steering.turnLeft(27);
+    } else if (right_detected == true && left_detected == false) {
+      steering.turnRight(17);
+    } else {
+      steering.setZeroPoint();
+    }
+
+    engine.run_forward();
+    interrupts();
+
+    engine_state = true;
+    front_detected = false;
+    back_detected = false;
+
+    delay(500);
+    engine.set_moving_state(2);
+    engine.run_backward();
   }
 
-  // controller();
-  // check_running_state();
+  switch (engine_state) {
+    case true:
+      engine.start();
+    break;
+    case false:
+      engine.stop();
+    break;
+  }
 
-  sensor1.capture();
-  sensor2.capture();
-  sensor3.capture();
-  sensor4.capture();
-  sensor5.capture();
-  sensor6.capture();
-
-  soon1.detectObstacle();
+  Serial.print("Motor status loop: ");
+  Serial.println(engine_state);
+}
 
 
-  automate_driving();
+/**
+ * @brief 
+ * 
+ */
+void detect_line()
+{
+   noInterrupts();
+
+  // Rechtsboven
+  if (!sensor1.crossedLine()) {
+    engine_state = false;
+    front_detected = true;
+    back_detected = false;
+    right_detected = true;
+  } else if (!sensor2.crossedLine()) {
+    engine_state = false;
+    front_detected = true;
+    back_detected = false;
+    left_detected = true;
+  } else if (!sensor3.crossedLine()) {
+    engine_state = false;
+    back_detected = true;
+    front_detected = false;
+  } else if (!sensor4.crossedLine()) {
+    engine_state = false;
+    back_detected = true;
+    front_detected = false;
+  }
 }
 
 
@@ -185,150 +258,4 @@ void check_running_state(int state)
       engine.start();
     break;
   }
-}
-
-
-/**
- * @brief Functie voor het draaien van bochten
- * 
- */
-void turn_corners()
-{
-  engine.stop();
-  delay(2000);
-  if (sensor3.getActive() == HIGH) {
-    steering.turnRight(17);
-    engine.start();
-    engine.set_moving_state(2);
-    engine.run_backward();
-    delay(1000);
-    steering.setZeroPoint();
-    engine.set_moving_state(1);
-    engine.run_forward();
-  } else if (sensor4.getActive() == HIGH) {
-    steering.turnLeft(27);
-    engine.start();
-    engine.set_moving_state(1);
-    engine.run_forward();
-    delay(1000);
-    engine.stop();
-  } else if (sensor5.getActive() == HIGH) {
-    steering.turnLeft(27);
-    engine.start();
-    engine.set_moving_state(2);
-    engine.run_backward();
-    delay(1000);
-    engine.stop();
-  } else if (sensor6.getActive() == HIGH) {
-    steering.turnRight(17);
-    engine.start();
-    engine.set_moving_state(1);
-    engine.run_forward();
-    delay(1000);
-    engine.stop();
-  }
-
-  steering.setZeroPoint();
-  engine.start();
-  engine.set_moving_state(1);
-  engine.run_forward();
-}
-
-
-/**
- * @brief Functie voor het autonoom rijden
- * 
- */
-void automate_driving()
-{
-  check_running_state(activate_state);
-
-  if (activate_state == 1) {
-    engine.set_moving_state(1);
-    engine.run_forward();
-
-    detect_object();
-
-    if (sensor1.crossedLine() && sensor3.crossedLine() || sensor1.crossedLine() && sensor5.crossedLine() || sensor1.crossedLine()) {
-      detect_ravine();
-    } 
-
-    if (sensor3.crossedLine() || sensor4.crossedLine() || sensor5.crossedLine() || sensor6.crossedLine()) {
-      turn_corners();
-    }
-  } else {
-    Serial.println("[error]\tHij wil niet starten!");
-  }
-}
-
-
-/**
- * @brief Functie voo rhet detecteren van een afgrond
- * 
- */
-void detect_ravine()
-{ 
-  engine.stop();
-  delay(2000);
-  engine.start();
-
-  if (sensor2.crossedLine()) {
-    engine.set_moving_state(2);
-    engine.run_backward();
-    delay(500);
-    engine.stop();
-  }
-
-  if (sensor3.crossedLine() || sensor6.crossedLine()) {             // Als links vrij is
-    steering.turnLeft(27);
-  } else if (sensor5.crossedLine() || sensor4.crossedLine()) {      // Als rechts vrij is
-    steering.turnRight(17);
-  } else {                                                          // Als er geen zijkanten vrij is
-    int rand = random(0, 100);
-    if (rand >= 50) {
-      steering.turnLeft(27);
-    } else if (rand <= 49) {
-      steering.turnRight(17);
-    }
-  }
-
-  engine.start();
-  engine.set_moving_state(2);
-  engine.run_backward();
-  for (int i = 0; i < 8000000;i++) {
-    if (sensor4.crossedLine() || sensor6.crossedLine()) {
-      turn_corners();
-    }
-
-
-    if (digitalRead(IR_SENSOR_PIN_2)) {
-      engine.stop();
-      delay(500);
-
-      steering.setZeroPoint();
-      engine.set_moving_state(1);
-      engine.run_forward();
-      delay(1000);
-      break;
-    } 
-  }
-  engine.stop();  
-
-  delay(500);
-
-  engine.start();
-  engine.set_moving_state(1);
-  engine.run_forward();
-  delay(1000);
-  steering.setZeroPoint();
-}
-
-
-/**
- * @brief Functie voor het detecteren en handelen bij obstakels
- * 
- */
-void detect_object()
-{
-
 }
