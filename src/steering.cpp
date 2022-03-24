@@ -2,7 +2,7 @@
  * @file steering.cpp
  * @author your name (you@domain.com)
  * @brief 
- * @version 0.1
+ * @version 1.0.0
  * @date 2021-12-01
  * 
  * @copyright Copyright (c) 2021
@@ -88,12 +88,13 @@ int Steering::getTurnDegree() {
 /**
  * @brief Functie voor het naar links sturen van de servo
  * 
+ * @param speed
  */
 void Steering::turnLeft(int speed) {
     Serial.println("Draai naar links!");
     this->setSpeed(speed); // default 27
     this->setState(LEFT);
-    ledcWrite(PWM_CHANNEL, this->getSpeed()); // Max value 30
+    ledcWrite(PWM_CHANNEL, speed); // Max value 30
     delay(50);
 }
 
@@ -101,12 +102,13 @@ void Steering::turnLeft(int speed) {
 /**
  * @brief Functie voor het naar rechts sturen van de servo
  * 
+ * @param speed
  */
 void Steering::turnRight(int speed) {
     Serial.println("Draai naar rechts!");
     this->setSpeed(speed); // default 17
     this->setState(RIGHT);
-    ledcWrite(PWM_CHANNEL, this->getSpeed()); // Min value 10
+    ledcWrite(PWM_CHANNEL, speed); // Min value 10
     delay(50);
 }
 

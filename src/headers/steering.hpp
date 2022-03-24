@@ -13,9 +13,9 @@
 #define STEERING
 
 
-#define     PWM_CHANNEL         2           // Kanaal waarop het signaal zit
+#define     PWM_CHANNEL         2        // Kanaal waarop het signaal zit
 #define     PWM_RESOLUTION      8        // Dit is het aantal bits voor de register van het pwm gebeuren
-#define     PWM_FREQUENTIE      50       // Frequentie is 5KHZ
+#define     PWM_FREQUENTIE      50       // Frequentie is 50hz
 
 #define     LEFT                1
 #define     RIGHT               2

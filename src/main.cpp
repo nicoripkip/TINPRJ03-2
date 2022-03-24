@@ -32,7 +32,7 @@
 #define   ULTRASOON_PIN_1       15
 #define   ULTRASOON_PIN_2       12
 
-#define   SERVO_PIN             0x17
+#define   SERVO_PIN             5
 
 
 void controller(); 
@@ -47,7 +47,7 @@ IRSensor sensor1(IR_SENSOR_PIN_1);    // Kijkt voor een lijn voor de ACM
 IRSensor sensor2(IR_SENSOR_PIN_2);    // Kijkt voor een lijn achter de ACM
 IRSensor sensor3(IR_SENSOR_PIN_3);    // Kijkt voor een lijn aan de linkerkant voor van de ACM
 IRSensor sensor4(IR_SENSOR_PIN_4);    // Kijkt voor een lijn aan de linkerkant achter van de ACM
-Steering steering(SERVO_PIN);         // Object voor het 0------------------------------------------
+Steering steering(SERVO_PIN);         // Object voor het sturen
 UltraSoonSensor soon1(ULTRASOON_PIN_1, ULTRASOON_PIN_2);
 
 
@@ -69,7 +69,7 @@ volatile unsigned short _sensor4;
 void setup() 
 {
   Serial.begin(9600);
-  // wifi_init();
+  wifi_init();
   
   attachInterrupt(digitalPinToInterrupt(IR_SENSOR_PIN_1), detect_line, FALLING);
   attachInterrupt(digitalPinToInterrupt(IR_SENSOR_PIN_2), detect_line, FALLING);
@@ -106,9 +106,9 @@ void loop()
     engine.set_moving_state(2);
 
     if (_sensor2 != 0 && _sensor1 == 0) {
-      steering.turnLeft(27);
-    } else if (_sensor1 != 0 && _sensor2 == 0) {
       steering.turnRight(17);
+    } else if (_sensor1 != 0 && _sensor2 == 0) {
+      steering.turnLeft(27);
     } else {
       unsigned short number = random(0, 300);
 
@@ -133,9 +133,9 @@ void loop()
     engine.set_moving_state(1);
 
     if (_sensor4 != 0 && _sensor3 == 0) {
-      steering.turnLeft(27);
-    } else if (_sensor3 != 0 && _sensor4 == 0) {
       steering.turnRight(17);
+    } else if (_sensor3 != 0 && _sensor4 == 0) {
+      steering.turnLeft(27);
     } else {
       steering.setZeroPoint();
     }
@@ -279,7 +279,7 @@ void check_running_state(int state)
 
 
 /**
- * @brief 
+ * @brief Functie om objecten te detecteren
  * 
  */
 void detect_object()
