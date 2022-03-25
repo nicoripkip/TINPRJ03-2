@@ -92,6 +92,8 @@ void loop()
   controller();
 
   if (activate_state == 0) {
+    Serial.println("[info]\tAutonoom staat aan!");
+
     _sensor1 = digitalRead(IR_SENSOR_PIN_1);
     _sensor2 = digitalRead(IR_SENSOR_PIN_2);
     _sensor3 = digitalRead(IR_SENSOR_PIN_3);
@@ -314,16 +316,10 @@ void detect_object()
     engine.start();
     engine.set_moving_state(2);
 
-    unsigned short number = random(0, 300);
-
-    if (number <= 149) {
-      steering.turnLeft(27);
-    } else if (number >= 150) {
-      steering.turnRight(17);
-    }
+    steering.turnLeft(27);
 
     engine.run_backward();
-    delay(300);
+    delay(900);
     engine.stop();
     steering.setZeroPoint();
     engine.start();
