@@ -17,7 +17,7 @@
 #include "./headers/ultrasoonsensor.hpp"
 
 
-#define   REED_PIN              0x01
+#define   REED_PIN              23
 
 #define   MOTOR1_PIN1           32
 #define   MOTOR1_PIN2           19
@@ -39,6 +39,7 @@ void controller();
 void check_running_state(int);
 void detect_line();
 void detect_object();
+void detect_checkpoint();
 
 
 // Declareer objecten
@@ -75,6 +76,7 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(IR_SENSOR_PIN_2), detect_line, FALLING);
   attachInterrupt(digitalPinToInterrupt(IR_SENSOR_PIN_3), detect_line, FALLING);
   attachInterrupt(digitalPinToInterrupt(IR_SENSOR_PIN_4), detect_line, FALLING);
+  attachInterrupt(digitalPinToInterrupt(REED_PIN), detect_checkpoint, CHANGE);
 
   steering.setZeroPoint();
   delay(1000);
@@ -120,7 +122,10 @@ void loop()
     }
 
     engine.run_backward();
-    // interrupts();
+    delay(800);
+    steering.setZeroPoint();
+    engine.set_moving_state(1);
+    engine.run_forward();
 
     engine_state = true;
     front_detected = false;
@@ -141,7 +146,10 @@ void loop()
     }
 
     engine.run_forward();
-    interrupts();
+    delay(800);
+    steering.setZeroPoint();
+    engine.set_moving_state(2);
+    engine.run_backward();
 
     engine_state = true;
     front_detected = false;
@@ -194,6 +202,17 @@ void detect_line()
   interrupts();
 }
 
+
+/**
+ * @brief Functie voor het detecteren van een magneet
+ * 
+ */
+void detect_checkpoint()
+{
+  engine_state = false;
+  front_detected = false;
+  back_detected = false;
+}
 
 
 /**

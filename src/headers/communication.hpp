@@ -18,10 +18,10 @@
 #include <ArduinoJson.h>
 
 
-// #define     SSID                "Tesla IoT" // "H369A432F1F" 
-// #define     WIFI_PASSWORD       "fsL6HgjN" // "3D6269C97CEA"
-#define     SSID                "H369A432F1F" 
-#define     WIFI_PASSWORD       "3D6269C97CEA"
+#define     SSID                "Tesla IoT" // "H369A432F1F" 
+#define     WIFI_PASSWORD       "fsL6HgjN" // "3D6269C97CEA"
+// #define     SSID                "H369A432F1F" 
+// #define     WIFI_PASSWORD       "3D6269C97CEA"
 #define     WIFI_HOSTNAME       "supercar"
 #define     BUFFER_SIZE         8
 
