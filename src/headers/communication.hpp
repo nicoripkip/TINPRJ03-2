@@ -25,7 +25,7 @@
 #define     WIFI_HOSTNAME       "supercar"
 #define     BUFFER_SIZE         8
 
-const String SERVER_HOST = "145.24.238.4"; // "192.168.2.8" 
+const String SERVER_HOST = "145.24.238.48"; // "192.168.2.8" 
 const int SERVER_PORT = 8080;
 
 

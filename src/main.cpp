@@ -52,7 +52,7 @@ Steering steering(SERVO_PIN);         // Object voor het sturen
 UltraSoonSensor soon1(ULTRASOON_PIN_1, ULTRASOON_PIN_2);
 
 
-int activate_state = 1;
+int activate_state = 0;
 volatile bool engine_state = true;
 volatile bool front_detected = false;
 volatile bool back_detected = false;
@@ -89,80 +89,84 @@ void setup()
  */
 void loop() 
 {
-  _sensor1 = digitalRead(IR_SENSOR_PIN_1);
-  _sensor2 = digitalRead(IR_SENSOR_PIN_2);
-  _sensor3 = digitalRead(IR_SENSOR_PIN_3);
-  _sensor4 = digitalRead(IR_SENSOR_PIN_4);
+  controller();
 
-  digitalWrite(12, HIGH);
+  if (activate_state == 0) {
+    _sensor1 = digitalRead(IR_SENSOR_PIN_1);
+    _sensor2 = digitalRead(IR_SENSOR_PIN_2);
+    _sensor3 = digitalRead(IR_SENSOR_PIN_3);
+    _sensor4 = digitalRead(IR_SENSOR_PIN_4);
 
-  detect_object();
+    digitalWrite(12, HIGH);
 
-  engine.set_moving_state(1);
+    detect_object();
 
-  if (engine_state == false && front_detected == true && back_detected == false) {
-    engine.stop();
-    delay(2000);
-    steering.setZeroPoint();
-    engine.start();
-    engine.set_moving_state(2);
-
-    if (_sensor2 != 0 && _sensor1 == 0) {
-      steering.turnRight(17);
-    } else if (_sensor1 != 0 && _sensor2 == 0) {
-      steering.turnLeft(27);
-    } else {
-      unsigned short number = random(0, 300);
-
-      if (number <= 149) {
-        steering.turnLeft(27);
-      } else if (number >= 150) {
-        steering.turnRight(17);
-      }
-    }
-
-    engine.run_backward();
-    delay(800);
-    steering.setZeroPoint();
-    engine.set_moving_state(1);
-    engine.run_forward();
-
-    engine_state = true;
-    front_detected = false;
-    back_detected = false;
-  } else if (engine_state == false && back_detected == true && front_detected == false) {
-    engine.stop();
-    delay(2000);
-    steering.setZeroPoint();
-    engine.start();
     engine.set_moving_state(1);
 
-    if (_sensor4 != 0 && _sensor3 == 0) {
-      steering.turnRight(17);
-    } else if (_sensor3 != 0 && _sensor4 == 0) {
-      steering.turnLeft(27);
-    } else {
-      steering.setZeroPoint();
-    }
-
-    engine.run_forward();
-    delay(800);
-    steering.setZeroPoint();
-    engine.set_moving_state(2);
-    engine.run_backward();
-
-    engine_state = true;
-    front_detected = false;
-    back_detected = false;
-  }
-
-  switch (engine_state) {
-    case true:
-      engine.start();
-    break;
-    case false:
+    if (engine_state == false && front_detected == true && back_detected == false) {
       engine.stop();
-    break;
+      delay(2000);
+      steering.setZeroPoint();
+      engine.start();
+      engine.set_moving_state(2);
+
+      if (_sensor2 != 0 && _sensor1 == 0) {
+        steering.turnRight(17);
+      } else if (_sensor1 != 0 && _sensor2 == 0) {
+        steering.turnLeft(27);
+      } else {
+        unsigned short number = random(0, 300);
+
+        if (number <= 149) {
+          steering.turnLeft(27);
+        } else if (number >= 150) {
+          steering.turnRight(17);
+        }
+      }
+
+      engine.run_backward();
+      delay(800);
+      steering.setZeroPoint();
+      engine.set_moving_state(1);
+      engine.run_forward();
+
+      engine_state = true;
+      front_detected = false;
+      back_detected = false;
+    } else if (engine_state == false && back_detected == true && front_detected == false) {
+      engine.stop();
+      delay(2000);
+      steering.setZeroPoint();
+      engine.start();
+      engine.set_moving_state(1);
+
+      if (_sensor4 != 0 && _sensor3 == 0) {
+        steering.turnRight(17);
+      } else if (_sensor3 != 0 && _sensor4 == 0) {
+        steering.turnLeft(27);
+      } else {
+        steering.setZeroPoint();
+      }
+
+      engine.run_forward();
+      delay(800);
+      steering.setZeroPoint();
+      engine.set_moving_state(2);
+      engine.run_backward();
+
+      engine_state = true;
+      front_detected = false;
+      back_detected = false;
+    }
+
+    switch (engine_state) {
+      case true:
+        engine.start();
+      break;
+      case false:
+        engine.stop();
+      break;
+    }
   }
 }
 
